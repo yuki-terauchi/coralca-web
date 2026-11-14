@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../content/site.json';
+import { privacyMarkdown } from '../lib/markdown';
+const p = site.privacy;
+---
+
+<Base title={`${p.title}｜${site.meta.siteName}`} description={`${site.meta.siteName}の${p.title}`} markdown={privacyMarkdown()} mdPath="privacy.md" showNav={false}>
+  <article class="doc">
+    <div class="wrap">
+      <div class="inner">
+        <h1>{p.title}</h1>
+        <p class="date">{p.enacted}</p>
+        <p>{p.intro}</p>
+        {p.sections.map((s) => (<><h2>{s.heading}</h2><p>{s.body}</p></>))}
+      </div>
+    </div>
+  </article>
+</Base>

@@ -1,0 +1,99 @@
+---
+import Base from '../layouts/Base.astro';
+import site from '../content/site.json';
+import { homeMarkdown } from '../lib/markdown';
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const { hero, services, issues, company, contact } = site;
+const external = !contact.formUrl.startsWith('mailto:');
+---
+
+<Base title={site.meta.title} description={site.meta.description} markdown={homeMarkdown()} mdPath="index.md">
+  <section class="hero" aria-labelledby="hero-title">
+    <img class="hero-mark" src={`${base}logo-mark.svg`} alt="" aria-hidden="true" />
+    <div class="wrap">
+      <p class="hero-eyebrow">{hero.eyebrow}</p>
+      <h1 id="hero-title">{hero.catch.split(/(?<=、)/).map((seg) => <span class="phrase">{seg}</span>)}</h1>
+      <p class="hero-sub">{hero.sub}</p>
+    </div>
+  </section>
+
+  <section class="section" id="services" aria-labelledby="services-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="tracker"><span class="num">{services.number}</span>{services.topic}</p>
+        <h2 id="services-title">{services.heading}</h2>
+      </div>
+      <ol class="service-list section-body">
+        {services.items.map((it, i) => (
+          <li>
+            <span class="idx" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{it.title}</h3>
+            <p>{it.body}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="issues" aria-labelledby="issues-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="tracker"><span class="num">{issues.number}</span>{issues.topic}</p>
+        <h2 id="issues-title">{issues.heading}</h2>
+      </div>
+      <div class="section-body">
+        <table class="issues">
+          <thead>
+            <tr>
+              <th scope="col">{issues.beforeLabel}</th>
+              <th scope="col"><span class="visually-hidden">対応</span></th>
+              <th scope="col" class="after">{issues.afterLabel}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {issues.items.map((it) => (
+              <tr>
+                <td class="before">{it.before}</td>
+                <td class="arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12h15M13 6l6 6-6 6" /></svg>
+                </td>
+                <td class="after">{it.after}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="company" aria-labelledby="company-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="tracker"><span class="num">{company.number}</span>{company.topic}</p>
+        <h2 id="company-title">{company.heading}</h2>
+      </div>
+      <dl class="company section-body">
+        {company.rows.map((r) => (
+          <div><dt>{r.label}</dt><dd>{r.value}</dd></div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <section class="contact" id="contact" aria-labelledby="contact-title">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="tracker"><span class="num">{contact.number}</span>{contact.topic}</p>
+        <h2 id="contact-title">{contact.heading}</h2>
+      </div>
+      <div class="section-body">
+        <p class="lead">{contact.body}</p>
+        <a class="btn" href={contact.formUrl} {...(external ? { target: '_blank', rel: 'noopener' } : {})}>
+          {contact.buttonLabel}
+          {external && <span class="visually-hidden">（新しいタブで開きます）</span>}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6" /></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>

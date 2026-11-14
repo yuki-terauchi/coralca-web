@@ -1,0 +1,130 @@
+---
+import '../styles/global.css';
+import site from '../content/site.json';
+
+interface Props {
+  title: string;
+  description: string;
+  markdown: string; // AI向けビューに出す本文
+  mdPath: string; // 例: 'index.md'
+  showNav?: boolean;
+}
+const { title, description, markdown, mdPath, showNav = true } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const home = base;
+const canonical = new URL(Astro.url.pathname.replace(base, '/'), site.meta.url).toString();
+const navHref = (h: string) => (showNav ? h : `${home}${h}`);
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <link rel="alternate" type="text/markdown" href={`${base}${mdPath}`} title="Markdown版" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.meta.siteName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/og.png', site.meta.url).toString()} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <a class="skip" href="#main">本文へ移動</a>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href={home} aria-label={`${site.meta.siteName} トップへ`}>
+          <img src={`${base}logo.svg`} alt="Coralca コラルカ" width="140" height="36" />
+        </a>
+        <nav class="gnav" aria-label="ページ内">
+          <ul>
+            {site.nav.map((n) => (<li><a href={navHref(n.href)}>{n.label}</a></li>))}
+          </ul>
+        </nav>
+        <div class="view-switch" role="tablist" aria-label="表示の切り替え">
+          <button type="button" role="tab" id="tab-human" aria-controls="main" aria-selected="true" data-view="human">人向け</button>
+          <button type="button" role="tab" id="tab-ai" aria-controls="ai-view" aria-selected="false" data-view="ai" tabindex="-1"><span class="mono">AI</span>向け</button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main" role="tabpanel" aria-labelledby="tab-human">
+      <slot />
+    </main>
+
+    <section id="ai-view" class="ai-view" role="tabpanel" aria-labelledby="tab-ai" hidden>
+      <div class="wrap">
+        <div class="ai-bar">
+          <p>このページをAIが読みやすいMarkdownで表示しています。</p>
+          <div class="ai-actions">
+            <button type="button" id="copy-md">Markdownをコピー</button>
+            <a href={`${base}${mdPath}`}>{`/${mdPath}`}</a>
+            <a href={`${base}llms.txt`}>/llms.txt</a>
+          </div>
+        </div>
+        <pre id="md-source">{markdown}</pre>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <ul>
+          <li><a href={`${home}#company`}>会社概要</a></li>
+          <li><a href={`${home}privacy/`}>プライバシーポリシー</a></li>
+          <li><a href={`${base}llms.txt`}>llms.txt</a></li>
+        </ul>
+        <small>{site.footer.copyright}</small>
+      </div>
+    </footer>
+
+    <script is:inline>
+      (function () {
+        var tabs = Array.prototype.slice.call(document.querySelectorAll('.view-switch [role="tab"]'));
+        var human = document.getElementById('main');
+        var ai = document.getElementById('ai-view');
+        function show(view, focus) {
+          var isAi = view === 'ai';
+          human.hidden = isAi;
+          ai.hidden = !isAi;
+          tabs.forEach(function (t) {
+            var on = t.dataset.view === view;
+            t.setAttribute('aria-selected', on ? 'true' : 'false');
+            t.tabIndex = on ? 0 : -1;
+            if (on && focus) t.focus();
+          });
+          try { history.replaceState(null, '', isAi ? '#ai' : location.pathname); } catch (e) {}
+          if (isAi) window.scrollTo(0, 0);
+        }
+        tabs.forEach(function (t, i) {
+          t.addEventListener('click', function () { show(t.dataset.view); });
+          t.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+              e.preventDefault();
+              var next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+              show(next.dataset.view, true);
+            }
+          });
+        });
+        if (location.hash === '#ai') show('ai');
+        var copy = document.getElementById('copy-md');
+        copy.addEventListener('click', function () {
+          var text = document.getElementById('md-source').textContent;
+          var done = function () { copy.textContent = 'コピーしました'; setTimeout(function () { copy.textContent = 'Markdownをコピー'; }, 2000); };
+          if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, function () {});
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -5,7 +5,7 @@
 
 ## 文言を直すとき（ほとんどの依頼はこれ）
 
-1. `src/content/site.json` だけを編集する。人向けページ・AI向けタブ・`/index.md`・`/privacy.md`・`/llms.txt` はすべてここから生成される
+1. `src/content/site.json` だけを編集する。人向けページ・`/index.md`・`/privacy.md`・`/llms.txt` はすべてここから生成される
 2. `npm run build` が通ることを確認
 3. `main` に commit → push すると GitHub Actions が自動で公開する（1〜2分）
 
@@ -15,7 +15,7 @@
 |---|---|
 | `src/content/site.json` | 文言・会社情報・フォームURL（唯一の正本） |
 | `src/lib/markdown.ts` | site.json → Markdown / llms.txt の生成 |
-| `src/layouts/Base.astro` | ヘッダー・人向け／AI向けタブ・フッター |
+| `src/layouts/Base.astro` | ヘッダー・フッター |
 | `src/pages/index.astro` / `privacy.astro` | 人向けページ |
 | `src/pages/*.md.ts` / `llms.txt.ts` | AI向けの機械可読ファイル |
 | `src/styles/global.css` | デザイントークンと全スタイル |
@@ -34,7 +34,7 @@
 ## 確認方法
 
 - `npm run dev` → http://localhost:4321/ 。PC幅とスマホ幅（375px）で横スクロールが出ないこと
-- 「AI向け」タブ、`/index.md`、`/llms.txt` が site.json の変更を反映していること
+- `/index.md`、`/llms.txt` が site.json の変更を反映していること
 
 ## このリポジトリについて
 

@@ -1,11 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
 import site from '../content/site.json';
-import { privacyMarkdown } from '../lib/markdown';
 const p = site.privacy;
 ---
 
-<Base title={`${p.title}｜${site.meta.siteName}`} description={`${site.meta.siteName}の${p.title}`} markdown={privacyMarkdown()} mdPath="privacy.md" showNav={false}>
+<Base title={`${p.title}｜${site.meta.siteName}`} description={`${site.meta.siteName}の${p.title}`} mdPath="privacy.md" showNav={false}>
   <article class="doc">
     <div class="wrap">
       <div class="inner">

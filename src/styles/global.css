@@ -172,42 +172,9 @@ a {
   text-decoration-thickness: 1px;
 }
 
-/* 人向け／AI向け 切替 */
-.view-switch {
-  display: inline-flex;
-  padding: 3px;
-  background: var(--navy-50);
-  border-radius: 999px;
-  flex-shrink: 0;
-}
-.view-switch button {
-  appearance: none;
-  border: 0;
-  background: transparent;
-  color: var(--ink-sub);
-  font: inherit;
-  font-size: 13px;
-  letter-spacing: 0.04em;
-  min-height: 38px;
-  min-width: 64px;
-  padding: 0 14px;
-  border-radius: 999px;
-  cursor: pointer;
-}
-.view-switch button[aria-selected='true'] {
-  background: var(--navy-900);
-  color: #fff;
-}
-.view-switch .mono {
-  font-family: var(--mono);
-}
-
 @media (max-width: 860px) {
   .gnav {
     display: none;
-  }
-  .view-switch {
-    margin-left: auto;
   }
   .brand img {
     height: 28px;
@@ -546,60 +513,6 @@ a {
   align-items: center;
   min-height: 44px;
   color: #d5dbe4;
-}
-
-/* ---------- AI view ---------- */
-.ai-view {
-  padding: 48px 0 96px;
-  background: var(--bg-soft);
-  min-height: calc(100vh - 72px);
-}
-.ai-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px 24px;
-  margin-bottom: 20px;
-  font-size: 14px;
-  color: var(--ink-sub);
-}
-.ai-bar p {
-  margin: 0;
-}
-.ai-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.ai-actions a,
-.ai-actions button {
-  appearance: none;
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 16px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #fff;
-  color: var(--ink);
-  font: inherit;
-  font-size: 14px;
-  text-decoration: none;
-  cursor: pointer;
-}
-.ai-view pre {
-  margin: 0;
-  padding: clamp(20px, 3vw, 40px);
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  font-family: var(--mono);
-  font-size: 14px;
-  line-height: 1.85;
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow-wrap: anywhere;
 }
 
 [hidden] {

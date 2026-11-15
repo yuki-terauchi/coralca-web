@@ -5,11 +5,10 @@ import site from '../content/site.json';
 interface Props {
   title: string;
   description: string;
-  markdown: string; // AI向けビューに出す本文
   mdPath: string; // 例: 'index.md'
   showNav?: boolean;
 }
-const { title, description, markdown, mdPath, showNav = true } = Astro.props;
+const { title, description, mdPath, showNav = true } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const home = base;
 const canonical = new URL(Astro.url.pathname.replace(base, '/'), site.meta.url).toString();
@@ -53,30 +52,12 @@ const navHref = (h: string) => (showNav ? h : `${home}${h}`);
             {site.nav.map((n) => (<li><a href={navHref(n.href)}>{n.label}</a></li>))}
           </ul>
         </nav>
-        <div class="view-switch" role="tablist" aria-label="表示の切り替え">
-          <button type="button" role="tab" id="tab-human" aria-controls="main" aria-selected="true" data-view="human">人向け</button>
-          <button type="button" role="tab" id="tab-ai" aria-controls="ai-view" aria-selected="false" data-view="ai" tabindex="-1"><span class="mono">AI</span>向け</button>
-        </div>
       </div>
     </header>
 
-    <main id="main" role="tabpanel" aria-labelledby="tab-human">
+    <main id="main">
       <slot />
     </main>
-
-    <section id="ai-view" class="ai-view" role="tabpanel" aria-labelledby="tab-ai" hidden>
-      <div class="wrap">
-        <div class="ai-bar">
-          <p>このページをAIが読みやすいMarkdownで表示しています。</p>
-          <div class="ai-actions">
-            <button type="button" id="copy-md">Markdownをコピー</button>
-            <a href={`${base}${mdPath}`}>{`/${mdPath}`}</a>
-            <a href={`${base}llms.txt`}>/llms.txt</a>
-          </div>
-        </div>
-        <pre id="md-source">{markdown}</pre>
-      </div>
-    </section>
 
     <footer class="site-footer">
       <div class="wrap">
@@ -89,42 +70,5 @@ const navHref = (h: string) => (showNav ? h : `${home}${h}`);
       </div>
     </footer>
 
-    <script is:inline>
-      (function () {
-        var tabs = Array.prototype.slice.call(document.querySelectorAll('.view-switch [role="tab"]'));
-        var human = document.getElementById('main');
-        var ai = document.getElementById('ai-view');
-        function show(view, focus) {
-          var isAi = view === 'ai';
-          human.hidden = isAi;
-          ai.hidden = !isAi;
-          tabs.forEach(function (t) {
-            var on = t.dataset.view === view;
-            t.setAttribute('aria-selected', on ? 'true' : 'false');
-            t.tabIndex = on ? 0 : -1;
-            if (on && focus) t.focus();
-          });
-          try { history.replaceState(null, '', isAi ? '#ai' : location.pathname); } catch (e) {}
-          if (isAi) window.scrollTo(0, 0);
-        }
-        tabs.forEach(function (t, i) {
-          t.addEventListener('click', function () { show(t.dataset.view); });
-          t.addEventListener('keydown', function (e) {
-            if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-              e.preventDefault();
-              var next = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
-              show(next.dataset.view, true);
-            }
-          });
-        });
-        if (location.hash === '#ai') show('ai');
-        var copy = document.getElementById('copy-md');
-        copy.addEventListener('click', function () {
-          var text = document.getElementById('md-source').textContent;
-          var done = function () { copy.textContent = 'コピーしました'; setTimeout(function () { copy.textContent = 'Markdownをコピー'; }, 2000); };
-          if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, function () {});
-        });
-      })();
-    </script>
   </body>
 </html>

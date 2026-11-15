@@ -1,5 +1,5 @@
 // site.json から AI 向けの Markdown を生成する。
-// 「AI向け」タブ・/index.md・/privacy.md・/llms.txt はすべてここを通すので、文言は site.json だけ直せばよい。
+// /index.md・/privacy.md・/llms.txt はすべてここを通すので、文言は site.json だけ直せばよい。
 import site from '../content/site.json';
 
 const abs = (path: string) => new URL(path, site.meta.url).toString();

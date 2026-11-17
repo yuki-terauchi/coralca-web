@@ -33,6 +33,7 @@ const navHref = (h: string) => (showNav ? h : `${home}${h}`);
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={new URL('/og.png', site.meta.url).toString()} />
     <meta name="twitter:card" content="summary_large_image" />
+    {structuredData && <meta name="msvalidate.01" content="37775C5FA280D8E1927A6F48680EAA42" />}
     {structuredData && (
       <script type="application/ld+json" set:html={JSON.stringify(structuredData).replace(/</g, '\\u003c')} />
     )}
